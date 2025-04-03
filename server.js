@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
         </style>
       </head>
       <body>
-        <h1>Himanshu Jajoun</h1>
+        <h1>Himanshu Jadoun</h1>
         <button onclick="window.location.href='/api-docs'">Go to Swagger</button>
       </body>
     </html>
