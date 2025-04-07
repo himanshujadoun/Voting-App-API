@@ -1,7 +1,9 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
+const fs = require("fs");
+const path = require("path");
 
 const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    service: "Gmail",
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -9,14 +11,20 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendVerificationEmail = (email, token) => {
+    const templatePath = path.join(__dirname, "../templates/verify-email.html");
+    const rawHtml = fs.readFileSync(templatePath, "utf8");
+
+    const verificationLink = `${process.env.CLIENT_BASE_URL}/#/VerifyEmail?token=${token}`;
+    const finalHtml = rawHtml.replace("{{VERIFICATION_LINK}}", verificationLink);
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Email Verification',
-        html: `<p>Click <a href="http://localhost:3000/verify-email?token=${token}">here</a> to verify your email.</p>`,
+        subject: "Email Verification",
+        html: finalHtml,
     };
 
     transporter.sendMail(mailOptions, (err) => {
-        if (err) console.error('Error sending email:', err);
+        if (err) console.error("Error sending email:", err);
     });
 };

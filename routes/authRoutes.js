@@ -1,5 +1,5 @@
 const express = require("express");
-const { login, signup } = require("../controllers/authController");
+const { login, signup, verifyEmail } = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -65,5 +65,27 @@ router.post("/login", login);
  *         description: User already exists
  */
 router.post("/signup", signup);
+
+/**
+ * @swagger
+ * /api/auth/verify-email:
+ *   get:
+ *     summary: Verify user email
+ *     description: Verify the user with token and move to verified users table.
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Email verification token
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ *       400:
+ *         description: Invalid or expired token
+ */
+router.get("/verify-email", verifyEmail);
 
 module.exports = router;
