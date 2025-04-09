@@ -1,16 +1,29 @@
-const db = require('../config/db');
+const Vote = require('../models/voteModel');
 
 exports.vote = (req, res) => {
-    const { userId, partyId } = req.body;
+  const { userId, partyId } = req.body;
 
-    db.query('SELECT * FROM votes WHERE user_id = ?', [userId], (err, results) => {
-        if (err) return res.status(500).json({ message: 'Error checking vote status' });
+  if (!userId || !partyId) {
+    return res.status(400).json({ message: 'Missing user ID or party ID' });
+  }
 
-        if (results.length > 0) return res.status(400).json({ message: 'You have already voted!' });
+  Vote.hasVoted(userId, (err, results) => {
+    if (err) {
+      console.error('Error checking vote status:', err);
+      return res.status(500).json({ message: 'Error checking vote status' });
+    }
 
-        db.query('INSERT INTO votes (user_id, party_id) VALUES (?, ?)', [userId, partyId], (err) => {
-            if (err) return res.status(500).json({ message: 'Error recording vote' });
-            res.json({ message: 'Vote recorded successfully!' });
-        });
+    if (results.length > 0) {
+      return res.status(400).json({ message: 'You have already voted!' });
+    }
+
+    Vote.recordVote(userId, partyId, (err) => {
+      if (err) {
+        console.error('Error recording vote:', err);
+        return res.status(500).json({ message: 'Error recording vote' });
+      }
+
+      res.json({ message: 'Vote recorded successfully!' });
     });
+  });
 };
