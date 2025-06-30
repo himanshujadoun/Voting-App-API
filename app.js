@@ -46,7 +46,7 @@ const swaggerOptions = {
     },
     servers: [{ url: "https://voting-app-api-flame.vercel.app" }]
   },
-  apis: ["./routes/*.js"],
+  apis: [path.join(__dirname, 'routes/*.js')]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -58,3 +58,7 @@ app.use("/api/party", partyRoutes);
 app.use("/api/vote", voteRoutes);
 
 module.exports = app;
+app.use((err, req, res, next) => {
+  console.error('UNCAUGHT ERROR:', err);
+  res.status(500).json({ error: 'Internal Server Error', details: err.message });
+});
