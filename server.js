@@ -44,7 +44,7 @@ const swaggerOptions = {
         version: "1.0.0",
         description: "API documentation for the eVoting system",
       },
-      servers: [{ url: "https://voting-app-api2-production.up.railway.app" }],
+      servers: [{ url: "https://voting-app-api-flame.vercel.app" }],
       // servers: [{ url: "http://localhost:5000" }],
     },
     apis: ["./routes/*.js"], // Ensure this correctly points to route files
