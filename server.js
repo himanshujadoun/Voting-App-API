@@ -16,7 +16,7 @@ app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// Serve a simple HTML page on "/"
+// Welcome page
 app.get("/", (req, res) => {
   res.send(`
     <html>
@@ -35,28 +35,26 @@ app.get("/", (req, res) => {
   `);
 });
 
-// Swagger Configuration
+// Swagger
 const swaggerOptions = {
-    definition: {
-      openapi: "3.0.0",
-      info: {
-        title: "eVoting API",
-        version: "1.0.0",
-        description: "API documentation for the eVoting system",
-      },
-      servers: [{ url: "https://voting-app-api-flame.vercel.app" }],
-      // servers: [{ url: "http://localhost:5000" }],
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "eVoting API",
+      version: "1.0.0",
+      description: "API documentation for the eVoting system",
     },
-    apis: ["./routes/*.js"], // Ensure this correctly points to route files
-  };
-  
+    servers: [{ url: "https://voting-app-api-flame.vercel.app" }]
+  },
+  apis: ["./routes/*.js"],
+};
+
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// API Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/party", partyRoutes);
 app.use("/api/vote", voteRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app;
