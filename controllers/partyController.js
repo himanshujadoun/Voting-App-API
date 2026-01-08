@@ -1,8 +1,20 @@
-const db = require('../config/db');
+const getPool = require("../config/db");
 
-exports.getParties = (req, res) => {
-    db.query('SELECT id, name, candidate_name, TO_BASE64(image) AS image FROM election_party', (err, results) => {
-        if (err) return res.status(500).json({ message: 'Error fetching parties' });
-        res.json(results);
-    });
+exports.getParties = async (req, res, next) => {
+  try {
+    const pool = getPool();
+
+    const [results] = await pool.query(`
+      SELECT 
+        id, 
+        name, 
+        candidate_name, 
+        TO_BASE64(image) AS image 
+      FROM election_party
+    `);
+
+    res.json(results);
+  } catch (err) {
+    next(err);
+  }
 };
