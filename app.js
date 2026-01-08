@@ -1,10 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const path = require('path');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsDoc = require('swagger-jsdoc');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const path = require("path");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 const authRoutes = require("./routes/authRoutes");
 const partyRoutes = require("./routes/partyRoutes");
@@ -12,11 +12,12 @@ const voteRoutes = require("./routes/voteRoutes");
 
 const app = express();
 
-app.use(cors({ origin: '*', credentials: true }));
+// Middleware
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// Welcome page
+// Welcome route
 app.get("/", (req, res) => {
   res.send(`
     <html>
@@ -42,11 +43,10 @@ const swaggerOptions = {
     info: {
       title: "eVoting API",
       version: "1.0.0",
-      description: "API documentation for the eVoting system",
     },
-    servers: [{ url: "https://voting-app-api-flame.vercel.app" }]
+    servers: [{ url: "http://localhost:5000" }],
   },
-  apis: [path.join(__dirname, 'routes/*.js')]
+  apis: [path.join(__dirname, "routes/*.js")],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -57,8 +57,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/party", partyRoutes);
 app.use("/api/vote", voteRoutes);
 
-module.exports = app;
+// Error handler (LAST)
 app.use((err, req, res, next) => {
-  console.error('UNCAUGHT ERROR:', err);
-  res.status(500).json({ error: 'Internal Server Error', details: err.message });
+  console.error("UNCAUGHT ERROR:", err);
+  res.status(500).json({
+    error: "Internal Server Error",
+    details: err.message,
+  });
 });
+
+module.exports = app;
